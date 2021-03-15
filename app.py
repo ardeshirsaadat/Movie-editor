@@ -79,7 +79,7 @@ def create_app(test_config=None):
     @requires_auth('delete:actor')
     def delete_actor(id):
         try:
-            actor_by_id = Actor.query.get(id)
+            actor_by_id = Actor.query.filter(Actor.id == id).first()
             actor_by_id.delete()
             return jsonify({'success': True})
         except BaseException:
@@ -91,7 +91,7 @@ def create_app(test_config=None):
     @requires_auth('delete:movie')
     def delete_movie(id):
         try:
-            movie_by_id = Movie.query.get(id)
+            movie_by_id = Movie.query.filter(Movie.id == id).first()
             movie_by_id.delete()
             return jsonify({'success': True})
         except BaseException:
@@ -103,7 +103,7 @@ def create_app(test_config=None):
     @requires_auth('patch:actor')
     def update_actor(id):
         try:
-            actor_to_update = Actor.query.get(id)
+            actor_to_update = Actor.query.filter(Actor.id == id).first()
             if actor_to_update is None:
                 abort(404)
             data = request.get_json()
@@ -118,8 +118,10 @@ def create_app(test_config=None):
                 actor_to_update.gender = gender
             actor_to_update.update()
             return jsonify({
-                'success': True,
-                'actor': Actor.query.get(id).format()
+                'success':
+                True,
+                'actor':
+                Actor.query.filter(Actor.id == id).first().format()
             })
         except BaseException:
             abort(422)
@@ -130,7 +132,7 @@ def create_app(test_config=None):
     @requires_auth('patch:movie')
     def update_movie(id):
         try:
-            movie_to_update = Movie.query.get(id)
+            movie_to_update = Movie.query.filter(Movie.id == id).first()
             if movie_to_update is None:
                 abort(404)
             data = request.get_json()
@@ -143,8 +145,10 @@ def create_app(test_config=None):
 
             movie_to_update.update()
             return jsonify({
-                'success': True,
-                'movie': Movie.query.get(id).format()
+                'success':
+                True,
+                'movie':
+                Movie.query.filter(Movie.id == id).first().format()
             })
         except BaseException:
             abort(422)
@@ -166,6 +170,14 @@ def create_app(test_config=None):
             "error": 404,
             "message": "bad request"
         }), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "server error"
+        }), 500
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):

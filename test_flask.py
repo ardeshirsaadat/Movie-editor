@@ -7,6 +7,8 @@ from app import create_app
 from models import setup_db, Movie, Actor
 from flask_cors import CORS
 
+producer_token = os.environ['PRODUCER']
+
 
 class Movie_testCase(unittest.TestCase):
     """This class represents the trivia test case"""
@@ -18,7 +20,6 @@ class Movie_testCase(unittest.TestCase):
         self.database_path = "postgres://{}:{}@{}/{}".format(
             'postgres', '16760', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
-        self.exec = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlV3eWF3RFVGd0pOMFNXSVBlX2J2YiJ9.eyJpc3MiOiJodHRwczovL21vdmllLW1hbmFnZXItYXJkZXNoaXIudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYwNGRiZDZmYTI2MGY0MDA2YTc4NDZlNyIsImF1ZCI6Im1vdmllIiwiaWF0IjoxNjE1NzQ4MjAxLCJleHAiOjE2MTU3NTU0MDEsImF6cCI6IkwwZEIyRTJGRHJtMnR0TUdqZ3FnVEZxNTY2NEhkcXI0Iiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6YWN0b3IiLCJkZWxldGU6bW92aWUiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9yIiwicGF0Y2g6bW92aWUiLCJwb3N0OmFjdG9yIiwicG9zdDptb3ZpZSJdfQ.hY5vSszAoqMn9JtuTowtxfybkOyYEFwFFRb2LBqv3st-xZdVpO06Cf1y8OrEBAniGLYKDAC1UWeBdn70vBs-7GPm_z9EwWU0SybqYU9Jj5sitRn-ebpxZYyRw6Y-IIIrSWRubMBmXBOuNqQpRbyxonmMudBPXRsYg0bi7MBYoB4ewi2Mhrw_Bhhct73mTe97GCkzhy85Xnqfx_2mppnFJDJbHOWmCBst9dw52g8ECiwQued7eSk53HHdZ3drLOzRnx0A60Q5_aFSoWysxaUMgtjiAHndSH8XcxH2rUGesTNvyeOoXPECtTgeEwIEKPpNrhgD3A7JJDiZ0Tll2Rx2bw'
 
         # binds the app to the current context
         with self.app.app_context():
@@ -34,7 +35,7 @@ class Movie_testCase(unittest.TestCase):
     # .........................GET:/actors
     def test_get_actors(self):
         res = self.client().get(
-            '/actors', headers={'Authorization': 'Bearer ' + self.exec})
+            '/actors', headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -51,7 +52,7 @@ class Movie_testCase(unittest.TestCase):
 
     def test_get_movies(self):
         res = self.client().get(
-            '/movies', headers={'Authorization': 'Bearer ' + self.exec})
+            '/movies', headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -69,9 +70,9 @@ class Movie_testCase(unittest.TestCase):
 
     def test_patch_actors(self):
         res = self.client().patch(
-            '/actors/2',
+            '/actors/8',
             json={"name": "aj"},
-            headers={'Authorization': 'Bearer ' + self.exec})
+            headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -88,12 +89,12 @@ class Movie_testCase(unittest.TestCase):
 
     def test_patch_movies(self):
         res = self.client().patch(
-            '/movies/1',
+            '/movies/6',
             json={
                 "movie": "frogz",
                 "release_date": 20201010
             },
-            headers={'Authorization': 'Bearer ' + self.exec})
+            headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -111,7 +112,8 @@ class Movie_testCase(unittest.TestCase):
 
     def test_delete_actors(self):
         res = self.client().delete(
-            '/actors/2', headers={'Authorization': 'Bearer ' + self.exec})
+            '/actors/10',
+            headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -127,7 +129,7 @@ class Movie_testCase(unittest.TestCase):
     # ...............Delete:/movies.................
     def test_delete_movie(self):
         res = self.client().delete(
-            '/movies/2', headers={'Authorization': 'Bearer ' + self.exec})
+            '/movies/5', headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -149,7 +151,7 @@ class Movie_testCase(unittest.TestCase):
                 "age": 40,
                 "gender": "male"
             },
-            headers={'Authorization': 'Bearer ' + self.exec})
+            headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -177,7 +179,7 @@ class Movie_testCase(unittest.TestCase):
                 "movie": "once upon a time",
                 "release_date": 20100510
             },
-            headers={'Authorization': 'Bearer ' + self.exec})
+            headers={'Authorization': 'Bearer ' + producer_token})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
