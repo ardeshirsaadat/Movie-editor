@@ -14,7 +14,7 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-        return render_template('index.html')
+        return jsonify({'hello this is my app live!!'})
 
     @app.route('/actors', methods=['GET'])
     @requires_auth('get:actors')
